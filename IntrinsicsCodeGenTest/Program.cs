@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 using System;
+using System.Runtime.InteropServices;
 
 namespace IntrinsicsCodeGenTest
 {
@@ -7,6 +8,7 @@ namespace IntrinsicsCodeGenTest
     {
         public static void Main(string[] args)
         {
+            BenchmarkRunner.Run<ConstructorBench>();
             BenchmarkRunner.Run<CodeGenTests>();
         }
     }
