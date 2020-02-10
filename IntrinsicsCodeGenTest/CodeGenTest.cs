@@ -9,6 +9,7 @@ using System.Runtime.Intrinsics.X86;
 namespace IntrinsicsCodeGenTest
 {
     [StructLayout(LayoutKind.Explicit)]
+    //[SkipLocalsInit]
     struct MyVector4
     {
         [FieldOffset(0)]
@@ -26,16 +27,49 @@ namespace IntrinsicsCodeGenTest
         private Vector128<float> _vec128;
 
 
-        public MyVector4(float x, float y, float z, float w)
+        public MyVector4(float x, float y, float z, float w) : this()
         {
+            //unsafe
+            //{
+            //    fixed (MyVector4* pThis = &this)
+            //    {
+            //        // This skips the C# definite assignment rule that all fields of the struct
+            //        // must be assigned before the constructor exits.
+            //    }
+            //}
             //Unsafe.SkipInit(out var _vec); // .Net 5
             //Unsafe.SkipInit(out var _vec128); // .Net 5
-            _vec = default(System.Numerics.Vector4);
-            _vec128 = default(Vector128<float>);
+            //_vec = default(System.Numerics.Vector4);
+            //_vec128 = default(Vector128<float>);
+            this = default;
             X = x;
             Y = y;
             Z = z;
             W = w;
+        }
+
+        public readonly float VX
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return _vec128.GetElement(0); }
+        }
+
+        public readonly float VY
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return _vec128.GetElement(1); }
+        }
+
+        public readonly float VZ
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+             get { return _vec128.GetElement(2); }
+        }
+
+        public readonly float VW
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return _vec128.GetElement(3); }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -53,6 +87,18 @@ namespace IntrinsicsCodeGenTest
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return MathF.Sqrt(X * X + Y * Y + Z * Z + W * W); }
+        }
+
+        public readonly float Length_Vector128Prop
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return MathF.Sqrt(VX * VX + VY * VY + VZ * VZ + VW * VW); }
+        }
+
+        public readonly float Length_Vector4Prop
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return MathF.Sqrt(_vec.X * _vec.X + _vec.Y * _vec.Y + _vec.Z * _vec.Z + _vec.W * _vec.W); }
         }
 
         public readonly float Length_Sse_V1
@@ -160,6 +206,28 @@ namespace IntrinsicsCodeGenTest
             var sum = 0.0f;
             for (int i = 0; i < cnt; i++)
                 sum += local[i].Length_Ref;
+            return sum;
+        }
+
+        [Benchmark]
+        public float Vec4Length_Vector4Prop()
+        {
+            var local = arr;
+            var cnt = local.Length;
+            var sum = 0.0f;
+            for (int i = 0; i < cnt; i++)
+                sum += local[i].Length_Vector4Prop;
+            return sum;
+        }
+
+        [Benchmark]
+        public float Vec4Length_Vector128Prop()
+        {
+            var local = arr;
+            var cnt = local.Length;
+            var sum = 0.0f;
+            for (int i = 0; i < cnt; i++)
+                sum += local[i].Length_Vector128Prop;
             return sum;
         }
 
