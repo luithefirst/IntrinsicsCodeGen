@@ -8,8 +8,8 @@ namespace IntrinsicsCodeGenTest
     {
         public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<ConstructorBench>();
-            //BenchmarkRunner.Run<CodeGenTests>();
+            //BenchmarkRunner.Run<ConstructorBench>();
+            BenchmarkRunner.Run<CodeGenTests>();
         }
     }
 }

@@ -63,7 +63,7 @@ namespace IntrinsicsCodeGenTest
         public readonly float VZ
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-             get { return _vec128.GetElement(2); }
+            get { return _vec128.GetElement(2); }
         }
 
         public readonly float VW
@@ -179,6 +179,39 @@ namespace IntrinsicsCodeGenTest
                 var l2 = mmx.GetElement(0);
                 return MathF.Sqrt(l2);
             }
+        }
+
+        public readonly float Length_Sse_V5
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                unsafe
+                {
+                    fixed (void* pthis = &this)
+                    {
+                        var mmx = *((Vector128<float>*)pthis);
+                        mmx = Sse41.DotProduct(mmx, mmx, 0xF1);
+                        var l2 = mmx.GetElement(0);
+                        return MathF.Sqrt(l2);
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static unsafe float Length_Sse_V6_Helper(MyVector4 vec)
+        {
+            var mmx = *((Vector128<float>*)&vec);
+            mmx = Sse41.DotProduct(mmx, mmx, 0xF1);
+            var l2 = mmx.GetElement(0);
+            return MathF.Sqrt(l2);
+        }
+
+        public readonly float Length_Sse_V6
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Length_Sse_V6_Helper(this); }
         }
     }
 
@@ -322,6 +355,30 @@ namespace IntrinsicsCodeGenTest
             var sum = 0.0f;
             for (int i = 0; i < cnt; i++)
                 sum += local[i].Length_Sse_V4Safe;
+            //if (Math.Abs(sum - test) > 1e-5) throw new Exception("FAIL");
+            return sum;
+        }
+
+        [Benchmark]
+        public float Vec4Length_Sse_V5()
+        {
+            var local = arr;
+            var cnt = local.Length;
+            var sum = 0.0f;
+            for (int i = 0; i < cnt; i++)
+                sum += local[i].Length_Sse_V5;
+            //if (Math.Abs(sum - test) > 1e-5) throw new Exception("FAIL");
+            return sum;
+        }
+
+        [Benchmark]
+        public float Vec4Length_Sse_V6()
+        {
+            var local = arr;
+            var cnt = local.Length;
+            var sum = 0.0f;
+            for (int i = 0; i < cnt; i++)
+                sum += local[i].Length_Sse_V6;
             //if (Math.Abs(sum - test) > 1e-5) throw new Exception("FAIL");
             return sum;
         }
