@@ -220,20 +220,24 @@ namespace IntrinsicsCodeGenTest
     //.NET Core SDK = 5.0.100
 
     // [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
-    //  Job-ZTUXSF : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+    //  Job-POFHKZ : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
 
     //Runtime=.NET Core 3.1
 
-    //|                 Method |     Mean |     Error |    StdDev |
-    //|----------------------- |---------:|----------:|----------:|
-    //|   Vec4Length_Reference | 1.630 ms | 0.0177 ms | 0.0157 ms |
-    //|      Vec4Length_Sse_V1 | 1.222 ms | 0.0198 ms | 0.0185 ms |
-    //|      Vec4Length_Sse_V2 | 1.313 ms | 0.0140 ms | 0.0124 ms |
-    //|      Vec4Length_Sse_V3 | 1.427 ms | 0.0197 ms | 0.0184 ms |
-    //|   Vec4Length_Sse_Array | 1.094 ms | 0.0117 ms | 0.0109 ms |
-    //| Vec4Length_NumericsVec | 1.116 ms | 0.0060 ms | 0.0053 ms |
-    //|   Vec4Length_Vector128 | 1.443 ms | 0.0059 ms | 0.0055 ms |
-    //|  Vec4Length_Sse_V4Safe | 1.341 ms | 0.0079 ms | 0.0074 ms |
+    //|                   Method |     Mean |     Error |    StdDev |
+    //|------------------------- |---------:|----------:|----------:|
+    //|     Vec4Length_Reference | 1.553 ms | 0.0137 ms | 0.0122 ms |
+    //|   Vec4Length_Vector4Prop | 1.615 ms | 0.0073 ms | 0.0069 ms |
+    //| Vec4Length_Vector128Prop | 2.839 ms | 0.0496 ms | 0.0464 ms |
+    //|        Vec4Length_Sse_V1 | 1.210 ms | 0.0161 ms | 0.0150 ms |
+    //|        Vec4Length_Sse_V2 | 1.338 ms | 0.0253 ms | 0.0236 ms |
+    //|        Vec4Length_Sse_V3 | 1.409 ms | 0.0087 ms | 0.0077 ms |
+    //|     Vec4Length_Sse_Array | 1.087 ms | 0.0073 ms | 0.0061 ms |
+    //|   Vec4Length_NumericsVec | 1.113 ms | 0.0040 ms | 0.0038 ms | <- best performance, but introduces overahead due to overlapping field with redundant intialaization (can be avoided in .net 5)
+    //|     Vec4Length_Vector128 | 1.439 ms | 0.0043 ms | 0.0040 ms |
+    //|    Vec4Length_Sse_V4Safe | 1.332 ms | 0.0040 ms | 0.0036 ms |
+    //|        Vec4Length_Sse_V5 | 1.200 ms | 0.0092 ms | 0.0086 ms |
+    //|        Vec4Length_Sse_V6 | 1.285 ms | 0.0056 ms | 0.0052 ms |
 
     // NOTE: there seems to be a minor regression in Vec4Length_Reference when comparing to my original results here: https://github.com/dotnet/runtime/issues/31692
 
