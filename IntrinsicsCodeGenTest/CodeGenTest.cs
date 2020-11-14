@@ -266,7 +266,20 @@ namespace IntrinsicsCodeGenTest
     //|        Vec4Length_Sse_V5 | 1.182 ms | 0.0155 ms | 0.0145 ms |      80 B |
     //|        Vec4Length_Sse_V6 | 1.296 ms | 0.0070 ms | 0.0055 ms |      78 B |
 
+
+    //|                           Method |     Mean |     Error |    StdDev |
+    //|--------------------------------- |---------:|----------:|----------:|
+    //|     Vec4Length_Reference (3.1.0) | 1.451 ms | 0.0046 ms | 0.0041 ms |
+    //|     Vec4Length_Reference (3.1.9) | 1.553 ms | 0.0137 ms | 0.0122 ms |
+    //|     Vec4Length_Reference (5.0.0) | 1.620 ms | 0.0039 ms | 0.0035 ms |
+    //|        Vec4Length_Sse_V1 (3.1.0) | 1.191 ms | 0.0052 ms | 0.0049 ms |
+    //|        Vec4Length_Sse_V1 (3.1.9) | 1.210 ms | 0.0161 ms | 0.0150 ms |
+    //|        Vec4Length_Sse_V1 (5.0.0) | 1.170 ms | 0.0061 ms | 0.0051 ms |
+    //|   Vec4Length_NumericsVec (3.1.9) | 1.113 ms | 0.0040 ms | 0.0038 ms |
+    //|   Vec4Length_NumericsVec (5.0.0) | 1.454 ms | 0.0077 ms | 0.0072 ms |
+
     [SimpleJob(RuntimeMoniker.NetCoreApp50)]
+    //[SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [DisassemblyDiagnoser(printSource: true)]
     public class CodeGenTests
     {
