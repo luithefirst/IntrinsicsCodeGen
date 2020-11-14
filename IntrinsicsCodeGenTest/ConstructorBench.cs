@@ -24,7 +24,10 @@ namespace IntrinsicsCodeGenTest
     {
         MyVector4[] arr = new MyVector4[1000000];
         MyVector4_Plain[] arr2 = new MyVector4_Plain[1000000];
-        
+
+        /// <summary>
+        /// Constructor with overhead due to overlapping Numerics.Vector4 and Vector128
+        /// </summary>
         [Benchmark]
         public void Constructor()
         {
@@ -40,6 +43,9 @@ namespace IntrinsicsCodeGenTest
                 local[i] = MyVector4.Create(i, i, i, i);
         }
 
+        /// <summary>
+        /// Constructor of plain Vector4 (Reference)
+        /// </summary>
         [Benchmark]
         public void Reference()
         {

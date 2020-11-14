@@ -136,6 +136,28 @@ namespace IntrinsicsCodeGenTest
         }
     }
 
+    //BenchmarkDotNet=v0.12.0, OS=Windows 10.0.19041
+    //Intel Core i7-8700K CPU 3.70GHz(Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+    //.NET Core SDK = 5.0.100
+
+    // [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+    //  Job-ZTUXSF : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+
+    //Runtime=.NET Core 3.1
+
+    //|                 Method |     Mean |     Error |    StdDev |
+    //|----------------------- |---------:|----------:|----------:|
+    //|   Vec4Length_Reference | 1.630 ms | 0.0177 ms | 0.0157 ms |
+    //|      Vec4Length_Sse_V1 | 1.222 ms | 0.0198 ms | 0.0185 ms |
+    //|      Vec4Length_Sse_V2 | 1.313 ms | 0.0140 ms | 0.0124 ms |
+    //|      Vec4Length_Sse_V3 | 1.427 ms | 0.0197 ms | 0.0184 ms |
+    //|   Vec4Length_Sse_Array | 1.094 ms | 0.0117 ms | 0.0109 ms |
+    //| Vec4Length_NumericsVec | 1.116 ms | 0.0060 ms | 0.0053 ms |
+    //|   Vec4Length_Vector128 | 1.443 ms | 0.0059 ms | 0.0055 ms |
+    //|  Vec4Length_Sse_V4Safe | 1.341 ms | 0.0079 ms | 0.0074 ms |
+
+    // NOTE: there seems to be a minor regression in Vec4Length_Reference when comparing to my original results here: https://github.com/dotnet/runtime/issues/31692
+
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [DisassemblyDiagnoser(printAsm: true, printSource: true)]
     public class CodeGenTests
