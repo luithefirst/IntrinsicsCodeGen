@@ -45,7 +45,6 @@ namespace IntrinsicsCodeGenTest
     //|           Vector4 | 1.845 ms | 0.0057 ms | 0.0048 ms |
     //| Vector4_Reference | 1.878 ms | 0.0247 ms | 0.0231 ms |
 
-    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
     [DisassemblyDiagnoser(printSource: true)]
     public class ConstructorBench
     {

@@ -213,6 +213,22 @@ namespace IntrinsicsCodeGenTest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return Length_Sse_V6_Helper(this); }
         }
+
+        public readonly float Length_Sse_V7
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get 
+            {
+                unsafe
+                {
+                    var vec = this;
+                    var mmx = *((Vector128<float>*)&vec);
+                    mmx = Sse41.DotProduct(mmx, mmx, 0xF1);
+                    var l2 = mmx.GetElement(0);
+                    return MathF.Sqrt(l2);
+                }
+            }
+        }
     }
 
     //BenchmarkDotNet=v0.12.0, OS=Windows 10.0.19041
@@ -278,8 +294,33 @@ namespace IntrinsicsCodeGenTest
     //|   Vec4Length_NumericsVec (3.1.9) | 1.113 ms | 0.0040 ms | 0.0038 ms |
     //|   Vec4Length_NumericsVec (5.0.0) | 1.454 ms | 0.0077 ms | 0.0072 ms |
 
-    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
-    //[SimpleJob(RuntimeMoniker.NetCoreApp31)]
+
+
+    // UPDATE:
+    //
+    //BenchmarkDotNet v0.13.12, Windows 10 (10.0.19045.4291/22H2/2022Update)
+    //Intel Core i7-8700K CPU 3.70GHz(Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+    //.NET SDK 8.0.204
+    //  [Host]     : .NET 8.0.4 (8.0.424.16909), X64 RyuJIT AVX2
+    //  DefaultJob : .NET 8.0.4 (8.0.424.16909), X64 RyuJIT AVX2
+
+
+    //| Method                   | Mean     | Error     | StdDev    | Code Size |
+    //|------------------------- |---------:|----------:|----------:|----------:|
+    //| Vec4Length_Reference     | 1.506 ms | 0.0252 ms | 0.0224 ms |      98 B |
+    //| Vec4Length_Vector4Prop   | 1.508 ms | 0.0222 ms | 0.0197 ms |      98 B |
+    //| Vec4Length_Vector128Prop | 1.677 ms | 0.0176 ms | 0.0156 ms |      97 B |
+    //| Vec4Length_Sse_V1        | 1.305 ms | 0.0063 ms | 0.0059 ms |      89 B |
+    //| Vec4Length_Sse_V2        | 1.229 ms | 0.0189 ms | 0.0167 ms |      75 B |
+    //| Vec4Length_Sse_V3        | 1.227 ms | 0.0222 ms | 0.0296 ms |      87 B |
+    //| Vec4Length_Sse_Array     | 1.139 ms | 0.0213 ms | 0.0188 ms |     122 B |
+    //| Vec4Length_NumericsVec   | 1.137 ms | 0.0174 ms | 0.0162 ms |      55 B |
+    //| Vec4Length_Vector128     | 1.162 ms | 0.0081 ms | 0.0076 ms |      58 B |
+    //| Vec4Length_Sse_V4Safe    | 1.116 ms | 0.0073 ms | 0.0065 ms |      55 B |
+    //| Vec4Length_Sse_V5        | 1.303 ms | 0.0086 ms | 0.0072 ms |      89 B |
+    //| Vec4Length_Sse_V6        | 1.117 ms | 0.0049 ms | 0.0046 ms |      55 B |
+    //| Vec4Length_Sse_V7        | 1.125 ms | 0.0131 ms | 0.0129 ms |      55 B |
+
     [DisassemblyDiagnoser(printSource: true)]
     public class CodeGenTests
     {
@@ -443,6 +484,18 @@ namespace IntrinsicsCodeGenTest
             var sum = 0.0f;
             for (int i = 0; i < cnt; i++)
                 sum += local[i].Length_Sse_V6;
+            //if (Math.Abs(sum - test) > 1e-5) throw new Exception("FAIL");
+            return sum;
+        }
+
+        [Benchmark]
+        public float Vec4Length_Sse_V7()
+        {
+            var local = arr;
+            var cnt = local.Length;
+            var sum = 0.0f;
+            for (int i = 0; i < cnt; i++)
+                sum += local[i].Length_Sse_V7;
             //if (Math.Abs(sum - test) > 1e-5) throw new Exception("FAIL");
             return sum;
         }
